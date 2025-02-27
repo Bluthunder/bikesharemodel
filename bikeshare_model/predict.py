@@ -8,16 +8,17 @@ from typing import Union
 import pandas as pd
 import numpy as np
 
+
 from bikeshare_model import __version__ as _version
 from bikeshare_model.config.core import config
-from bikeshare_model.pipeline import titanic_pipe
+from bikeshare_model.pipeline import bikeshare_rental_pipe
 from bikeshare_model.processing.data_manager import load_pipeline
 from bikeshare_model.processing.data_manager import pre_pipeline_preparation
 from bikeshare_model.processing.validation import validate_inputs
 
 
 pipeline_file_name = f"{config.app_config_.pipeline_save_file}{_version}.pkl"
-titanic_pipe= load_pipeline(file_name=pipeline_file_name)
+bikeshare_rental_pipe= load_pipeline(file_name=pipeline_file_name)
 
 
 def make_prediction(*,input_data:Union[pd.DataFrame, dict]) -> dict:
@@ -25,25 +26,38 @@ def make_prediction(*,input_data:Union[pd.DataFrame, dict]) -> dict:
 
     validated_data, errors = validate_inputs(input_df=pd.DataFrame(input_data))
     
-    #validated_data=validated_data.reindex(columns=['Pclass','Sex','Age','Fare', 'Embarked','FamilySize','Has_cabin','Title'])
     validated_data=validated_data.reindex(columns=config.model_config_.features)
-    #print(validated_data)
     results = {"predictions": None, "version": _version, "errors": errors}
     
-    predictions = titanic_pipe.predict(validated_data)
+    predictions = bikeshare_rental_pipe.predict(validated_data)
 
-    results = {"predictions": predictions,"version": _version, "errors": errors}
+    results = {"predictions": int(predictions[0]),"version": _version, "errors": errors}
     print(results)
     if not errors:
 
-        predictions = titanic_pipe.predict(validated_data)
+        predictions = bikeshare_rental_pipe.predict(validated_data)
         results = {"predictions": predictions,"version": _version, "errors": errors}
-        #print(results)
 
     return results
 
 if __name__ == "__main__":
 
-    data_in = []
+    data_in = {
+        'dteday': ['2012-11-05'],
+        'season': ['winter'],
+        'hr': ['6am'],
+        'holiday': ['No'],
+        'weekday': ['Mon'],
+        'workingday': ['Yes'],
+        'weathersit': ['Mist'],
+        'temp': [6.1],
+        'atemp': [3.0014],
+        'hum': [49.0],
+        'windspeed': [19.0012],
+        'casual': [4],
+        'registered': [135]
+    }
+
+    input_df = pd.DataFrame(data_in)
     
-    make_prediction(input_data=data_in)
+    make_prediction(input_data=input_df)

@@ -7,18 +7,19 @@ pipeline_save_file: bikerental_model_output
 
 
 features:
+  - dteday
+  - yr # --> generated from the dteday
+  - mnth # # --> generated from the dteday
   - season
-  - hr
-  - holiday
+  - hr 
+  - holiday 
   - weekday
-  - workingday
-  - weathersit
-  - temp
+  - workingday  
+  - weathersit   
+  - temp      
   - atemp
   - hum
   - windspeed
-  - yr
-  - mnth
 
 unused_features:
   # - dteday
@@ -33,6 +34,20 @@ weathersit_var: weathersit
 holiday_var: holiday
 workingday_var: workingday
 hr_var: hr
+
+# Features inside processing pipeline
+
+dteday_var: dteday  #  imputatation 
+  
+temp_var: temp # Outlier Handling
+
+atemp_var: atemp # Outlier Handling
+
+hum_var: hum # Outlier Handling
+
+wind_speed_var: windspeed # Outlier Handling
+
+weekday_var: weekday # One Hot Encoding
 
 
 yr_mapping:
@@ -102,17 +117,20 @@ hour_mapping:
   3am: 21
   4am: 22
   5am: 23
+
+
+weekday_mapping:
+  Mon: 0
+  Tue: 1
+  Wed: 2
+  Thu: 3
+  Fri: 4
+  Sat: 5
+  Sun: 6
   
-
-
-
-
-
-
-
 test_size: 0.20
 random_state: 42
-n_estimators: 150
-max_depth: 5
+n_estimators: 100
+max_depth: 10
 max_features: 3
 

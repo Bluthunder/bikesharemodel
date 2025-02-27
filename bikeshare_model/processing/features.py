@@ -2,39 +2,26 @@ import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 import pdb
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s -%(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 class WeekdayImputer(BaseEstimator, TransformerMixin):
-    def __init__(self, date_column='dteday', weekday_column="weekday"):
+    def __init__(self, date_column='dteday', weekday_column = 'weekday'):
         self.date_column = date_column
         self.weekday_column = weekday_column
 
-    def fit(self, X, y=None):
-        return self  # No fitting required
+    def fit(self, X: pd.DataFrame, y: pd.Series = None):
+        # we need the fit statement to accomodate the sklearn pipeline
+        return self
 
-    def transform(self, X):
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
-        
-        pdb.set_trace()
-        
-        # Ensure date column is in datetime format
-        # X[self.date_column] = pd.to_datetime(X[self.date_column])
-
-        print(f"Columns in DataFrame: {X.columns.tolist()}")
-        if self.date_column not in X.columns:
-            raise ValueError(f"Column '{self.date_column}' is missing from DataFrame!")
-        
-        if not pd.api.types.is_datetime64_any_dtype(X[self.date_column]):
-            X[self.date_column] = pd.to_datetime(X[self.date_column], errors="coerce")
-
-
-        
-
-        # Impute missing weekday values using the day name abbreviation
-        X.loc[X[self.weekday_column].isna(), self.weekday_column] = (
-            X.loc[X[self.weekday_column].isna(), self.date_column]
-            .dt.strftime("%a")  # Get three-letter weekday abbreviation
-        )
-
+        weeks=X[X[self.weekday_column].isnull()].index
+        X.loc[weeks,self.weekday_column] = X.loc[weeks,self.date_column].dt.day_name().str[:3]
+        X.drop(self.date_column, axis=1, inplace=True)
         return X
     
 
@@ -70,44 +57,31 @@ class Mapper(BaseEstimator, TransformerMixin):
 
 
 class CustomOutlierHandler(BaseEstimator, TransformerMixin):
-    def __init__(self, columns=None, method="iqr", factor=1.5):
-        """
-        Handles outliers in numerical columns by capping them at upper or lower bounds.
+    def __init__(self, variable:str):
+        if not isinstance(variable, str):
+            raise ValueError("variables should be a string")
+        self.variable = variable
 
-        :param columns: List of columns to process. If None, all numerical columns are considered.
-        :param method: Outlier detection method ("iqr" for Interquartile Range).
-        :param factor: Multiplier for the IQR range (default is 1.5).
-        """
-        self.columns = columns
-        self.method = method
-        self.factor = factor
-        self.bounds = {}  # Dictionary to store column-wise outlier thresholds
 
-    def fit(self, X, y=None):
-        """Calculate the upper and lower bounds for outlier handling."""
-        X = X.copy()
-        if self.columns is None:
-            self.columns = X.select_dtypes(include=[np.number]).columns.tolist()
-
-        for col in self.columns:
-            if self.method == "iqr":
-                Q1 = X[col].quantile(0.25)
-                Q3 = X[col].quantile(0.75)
-                IQR = Q3 - Q1
-                lower_bound = Q1 - self.factor * IQR
-                upper_bound = Q3 + self.factor * IQR
-                self.bounds[col] = (lower_bound, upper_bound)
-
+    def fit(self, X: pd.DataFrame, y: pd.Series = None):
+    
+        q1 = X.describe()[self.variable].loc['25%']
+        q3 = X.describe()[self.variable].loc['75%']
+        iqr = q3 - q1
+        self.lower_bound = q1 - (1.5 * iqr)
+        self.upper_bound = q3 + (1.5 * iqr)
         return self
 
-    def transform(self, X):
-        """Clamp outlier values to the computed bounds."""
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         X = X.copy()
-        for col, (lower, upper) in self.bounds.items():
-            X[col] = X[col].clip(lower=lower, upper=upper)
+        for i in X.index:
+            if X.loc[i,self.variable] > self.upper_bound:
+                X.loc[i,self.variable]= self.upper_bound
+            if X.loc[i,self.variable] < self.lower_bound:
+                X.loc[i,self.variable]= self.lower_bound
         return X
 
-
+  
 
 class WeekdayOneHotEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, column="weekday"):

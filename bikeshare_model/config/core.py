@@ -37,29 +37,34 @@ class ModelConfig(BaseModel):
     """
 
     target: str
-    features: List[str]  
+    features: List[str]
     unused_features: List[str]
+    dteday_var: str 
+    weathersit_var:str 
+    temp_var:str 
+    atemp_var: str 
+    hum_var:str
+    yr_var:str
+    mnth_var: str
+    season_var: str
+    hr_var: str
+    holiday_var: str
+    workingday_var: str
+    wind_speed_var:str
+    weekday_var:str
+    yr_mapping: Dict[int, int] 
+    mnth_mapping: Dict[str, int]
+    season_mapping: Dict[str, int]
+    weather_mapping: Dict[str, int]
+    holiday_mapping: Dict[str, int]
+    workingday_mapping: Dict[str, int]
+    hour_mapping: Dict[str, int]
     test_size:float
     random_state: int
     n_estimators: int
     max_depth: int
     max_features: int
-    yr_var: str
-    mnth_var: str
-    season_var: str
-    weathersit_var: str
-    holiday_var: str
-    workingday_var: str
-    hr_var: Any
-    yr_mapping: Dict[str, int]
-    mnth_mapping: Dict[str, int]
-    weather_mapping: Dict[str, int]
-    season_mapping: Dict[str, int]
-    holiday_mapping: Dict[str, int]
-    workingday_mapping: Dict[str, int]
-    hour_mapping: Dict[str, int]
-
-
+    weekday_mapping: Dict[str, int]
 
 
 class Config(BaseModel):
