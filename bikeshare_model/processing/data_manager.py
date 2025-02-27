@@ -16,16 +16,11 @@ from bikeshare_model.config.core import DATASET_DIR, TRAINED_MODEL_DIR, config
 
 
 def extract_yr_mnth(df: pd.DataFrame, date_column: str) -> pd.DataFrame:
-    if date_column in df.columns:
-        if not pd.api.types.is_datetime64_any_dtype(df[date_column]):
-            df[date_column] = pd.to_datetime(df[date_column], errors="coerce")
-    else:
-        print(f"⚠️ Warning: Column '{date_column}' not found in DataFrame!")
-
-
-
-    df["yr"] = df[date_column].dt.year
-    df["mnth"] = df[date_column].dt.month
+    # convert 'dteday' column to Datetime datatype
+    df['dteday'] = pd.to_datetime(df['dteday'], format='%Y-%m-%d')
+    # Add new features 'yr' and 'mnth
+    df['yr'] = df['dteday'].dt.year
+    df['mnth'] = df['dteday'].dt.month_name()
 
     return df
 

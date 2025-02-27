@@ -1,5 +1,7 @@
 import sys
 from pathlib import Path
+import pdb 
+
 file = Path(__file__).resolve()
 parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
@@ -10,7 +12,8 @@ from sklearn.metrics import accuracy_score
 
 from bikeshare_model.config.core import config
 from bikeshare_model.pipeline import bikeshare_rental_pipe
-from bikeshare_model.processing.data_manager import load_dataset, save_pipeline, pre_pipeline_preparation
+from bikeshare_model.processing.data_manager import load_dataset, save_pipeline
+from sklearn.metrics import mean_squared_error, r2_score
 
 def run_training() -> None:
     
@@ -31,18 +34,16 @@ def run_training() -> None:
 
     # Pipeline fitting
     bikeshare_rental_pipe.fit(X_train,y_train)
+    y_pred = bikeshare_rental_pipe.predict(X_test)
     
     #print("Accuracy(in %):", accuracy_score(y_test, y_pred)*100)
 
     # persist trained model
     save_pipeline(pipeline_to_persist= bikeshare_rental_pipe)
+
     # printing the score
+    print("R2 Score (in %):", r2_score(y_test, y_pred)*100)
     
 if __name__ == "__main__":
     print("Running")
-
-    # data = load_dataset(file_name=config.app_config_.training_data_file)
-
-    # print(data)
-    
     run_training()
