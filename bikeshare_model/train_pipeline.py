@@ -8,7 +8,6 @@ sys.path.append(str(root))
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 
 from bikeshare_model.config.core import config
 from bikeshare_model.pipeline import bikeshare_rental_pipe
@@ -35,8 +34,6 @@ def run_training() -> None:
     # Pipeline fitting
     bikeshare_rental_pipe.fit(X_train,y_train)
     y_pred = bikeshare_rental_pipe.predict(X_test)
-    
-    #print("Accuracy(in %):", accuracy_score(y_test, y_pred)*100)
 
     # persist trained model
     save_pipeline(pipeline_to_persist= bikeshare_rental_pipe)
