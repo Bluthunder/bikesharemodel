@@ -82,7 +82,8 @@ class CustomOutlierHandler(BaseEstimator, TransformerMixin):
         return X
 
   
-
+# Not being used
+# Changed this with mapper
 class WeekdayOneHotEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, column="weekday"):
         """

@@ -45,7 +45,7 @@ if __name__ == "__main__":
     data_in = {
         'dteday': ['2012-11-05'],
         'season': ['winter'],
-        'hr': ['6am'],
+        'hr': ['4am'],
         'holiday': ['No'],
         'weekday': ['Mon'],
         'workingday': ['Yes'],
