@@ -19,6 +19,8 @@ The following libraries and tools are used in this project:
 - **pydantic** - For data validation and settings management.
 - **strictyaml** - For YAML-based configuration management.
 - **ruamel.yaml** - For YAML parsing and writing.
+- **pytest** - For running unit and integration tests.
+- **build** - For packaging the project.
 
 ## 📂 Project Structure
 ```bash
@@ -41,12 +43,21 @@ The following libraries and tools are used in this project:
 │   │   ├── train_pipeline.py
 │   │   ├── VERSION
 │   │   ├── __init__.py
-├── requirements          # Dependency management
+├── tests                  # Unit and integration tests
+│   ├── __pycache__/       
+│   ├── conftest.py        # Pytest configuration
+│   ├── test_features.py   # Tests for feature engineering
+│   ├── test_predictions.py # Tests for model predictions
+│   ├── __init__.py       
+├── requirements           # Dependency management
 │   ├── requirements.txt
-├── venv                  # Virtual environment
-├── .gitignore            # Git ignore file
-├── README.md             # Project documentation
-```
+│   ├── test_requirements.txt  # Dependencies for testing
+├── venv                   # Virtual environment
+├── .gitignore             # Git ignore file
+├── README.md              # Project documentation
+├── setup.py               # Packaging setup
+├── pyproject.toml         # Project metadata and dependencies
+
 
 ## ⚙️ Installation
 ```sh
@@ -55,6 +66,38 @@ cd bikeshare-rental-model
 python -m venv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install -r requirements/requirements.txt
+```
+
+## 🛠 Running Tests
+Install testing dependencies:
+
+```sh
+pip install -r requirements/test_requirements.txt
+Run tests using pytest:
+```
+
+Run Test Using **pytest**
+```sh
+pytest tests/
+```
+
+## 🔨 How to Build the Package
+First, install the build package:
+
+```sh
+pip install build
+Then, build the package:
+```
+
+Then, build the package:
+```sh
+python -m build
+```
+
+This will generate a distributable package inside the dist/ folder.
+To install the package locally:
+```sh
+pip install dist/*.whl
 ```
 
 ## 🚀 Usage
@@ -82,8 +125,8 @@ pip install -r requirements/requirements.txt
 Contributions are welcome! Feel free to submit pull requests or report issues.
 
 ## 📜 License
-This project is for educational purposes under **IISC**. Licensing details to be determined.
+This project is licensed under the **MIT** License
 
 ---
-**Author: Your Name**
+**Author: Kaushik T D Roy**
 
