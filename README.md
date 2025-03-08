@@ -57,7 +57,7 @@ The following libraries and tools are used in this project:
 ├── README.md              # Project documentation
 ├── setup.py               # Packaging setup
 ├── pyproject.toml         # Project metadata and dependencies
-
+```
 
 ## ⚙️ Installation
 ```sh
